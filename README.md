@@ -14,12 +14,12 @@ options:
 
 Make sure you've cloned repository:
 ```bash
-git clone https://github.com/mraubogmg/battleship-php
+git clone https://github.com/mraubogmg/battleship-php ${HOME}/battleship
 ```
 
 Run docker container with composer:
 ```bash
-docker run -it -v ${PWD}/battleship:/battleship -w /battleship composer bash
+docker run -it -v ${HOME}/battleship:/battleship -w /battleship composer bash
 ```
 
 Run battleship with composer.
