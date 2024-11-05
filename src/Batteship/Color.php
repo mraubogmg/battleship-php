@@ -11,4 +11,5 @@ class Color
     const YELLOW = "\e[33m";
     const ORANGE = "\e[33m";
     const CHARTREUSE = "\e[32m";
+    const PURPLE = "\e[35m";
 }
