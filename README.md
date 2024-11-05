@@ -12,8 +12,17 @@ options:
 
 ## Run locally
 
-Run battleship with composer
+Make sure you've cloned repository:
+```bash
+git clone https://github.com/mraubogmg/battleship-php ${HOME}/battleship
+```
 
+Run docker container with composer:
+```bash
+docker run -it -v ${HOME}/battleship:/battleship -w /battleship composer bash
+```
+
+Run battleship with composer.
 ```bash
 composer run game
 ```
