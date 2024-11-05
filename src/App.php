@@ -11,6 +11,8 @@ class App
     private static $enemyFleet = array();
     private static $round = 1;
     private static $console;
+    private static $lastPosition = null;
+    private static $lastIsHit = null;
 
     static function run()
     {
@@ -46,21 +48,21 @@ class App
         array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 7));
         array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 8));
 
-        // array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 6));
-        // array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 7));
-        // array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 8));
-        // array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 9));
+        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 6));
+        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 7));
+        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 8));
+        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 9));
 
-        // array_push(self::$enemyFleet[2]->getPositions(), new Position('A', 3));
-        // array_push(self::$enemyFleet[2]->getPositions(), new Position('B', 3));
-        // array_push(self::$enemyFleet[2]->getPositions(), new Position('C', 3));
+        array_push(self::$enemyFleet[2]->getPositions(), new Position('A', 3));
+        array_push(self::$enemyFleet[2]->getPositions(), new Position('B', 3));
+        array_push(self::$enemyFleet[2]->getPositions(), new Position('C', 3));
 
-        // array_push(self::$enemyFleet[3]->getPositions(), new Position('F', 8));
-        // array_push(self::$enemyFleet[3]->getPositions(), new Position('G', 8));
-        // array_push(self::$enemyFleet[3]->getPositions(), new Position('H', 8));
+        array_push(self::$enemyFleet[3]->getPositions(), new Position('F', 8));
+        array_push(self::$enemyFleet[3]->getPositions(), new Position('G', 8));
+        array_push(self::$enemyFleet[3]->getPositions(), new Position('H', 8));
 
-        // array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 5));
-        // array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 6));
+        array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 5));
+        array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 6));
     }
 
     public static function InitializeMyFleetPreset()
@@ -161,8 +163,9 @@ class App
 
     public static function InitializeGame()
     {
-        // self::InitializeMyFleet();
-        self::InitializeMyFleetPreset();
+        self::InitializeMyFleet();
+        // self::InitializeMyFleetPreset();
+        
         self::InitializeEnemyFleet();
         
         // self::$console->println("Enemy fleet :");
@@ -192,6 +195,7 @@ class App
         self::$console->println("    \" \"\" \"\" \"\" \"");
 
         while (true) {
+
             sleep(1);
             self::$console->println();
 
@@ -212,6 +216,16 @@ class App
 
             self::$console->println("Player, it's your turn");
             self::$console->println();
+
+        
+            // if (self::$lastPosition !== null) {
+            //     printf("Last position was %s%s", self::$lastPosition, '');
+            // }
+
+            // if (self::$lastIsHit !== null) {
+            //     printf("Last shot was %s", self::$lastIsHit ? "hit" : "miss");
+            // }
+            
 
             self::$console->println("Enter coordinates for your shot :");
             self::$console->resetForegroundColor();
@@ -247,7 +261,16 @@ class App
                 self::$console->println("");
                 self::$console->println("Miss");
                 self::$console->resetForegroundColor();
+
             }
+            // self::$lastPosition = $position;
+
+            // self::$lastIsHit = $isHit;
+
+            
+            sleep(1);
+            self::$console->println();
+            self::$console->println("It's now the computer's turn.");
 
 
             sleep(1);
