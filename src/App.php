@@ -146,7 +146,10 @@ class App
         foreach (self::$myFleet as $ship) {
 
             self::$console->println();
+            self::$console->println("--------------------------------");
+            self::$console->println();
             printf("Please enter the positions for the %s (size: %s)", $ship->getName(), $ship->getSize());
+            self::$console->println();
 
             for ($i = 1; $i <= $ship->getSize(); $i++) {
                 printf("\nEnter position %s of %s (i.e A3):", $i, $ship->getSize());
