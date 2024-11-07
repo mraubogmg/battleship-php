@@ -78,6 +78,10 @@ class App
             1 => ShipPresets::getPreset1(),
             2 => ShipPresets::getPreset2(),
             3 => ShipPresets::getPreset3(),
+            4 => ShipPresets::getPreset4(),
+            5 => ShipPresets::getPreset5(),
+            6 => ShipPresets::getPreset6(),
+            7 => ShipPresets::getPreset7(),
             default => ShipPresets::getPreset1(),
         };
         
@@ -159,7 +163,9 @@ class App
         // self::InitializeMyFleet();
         self::InitializeMyFleetPreset();
 
-        $presetNumber = random_int(1, 3);
+        $presetNumber = random_int(1, 7);
+
+        self::$console->println("Enemy preset number: " . $presetNumber);
 
         self::InitializeEnemyFleet($presetNumber);
 
@@ -272,13 +278,13 @@ class App
             }
 
             // sleep(1);
-            // self::$console->println();
+            self::$console->println();
             
-            // self::$console->println("Enemy Shots:");
-            // foreach (self::$enemyShots as $shot) {
-            //     self::$console->println($shot);
-            // }
-            // self::$console->println();
+            self::$console->println("Enemy Shots:");
+            foreach (self::$enemyShots as $shot) {
+                self::$console->println($shot);
+            }
+            self::$console->println();
 
             sleep(1);
             self::$console->println();
