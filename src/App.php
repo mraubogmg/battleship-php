@@ -4,6 +4,7 @@ use Battleship\GameController;
 use Battleship\Position;
 use Battleship\Letter;
 use Battleship\Color;
+use Battleship\ShipPresets;
 
 class App
 {
@@ -42,7 +43,7 @@ class App
         self::StartGame();
     }
 
-    public static function InitializeEnemyFleet()
+    public static function InitializeMyFleetPreset()
     {
         self::$enemyFleet = GameController::initializeShips();
 
@@ -69,37 +70,22 @@ class App
         array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 6));
     }
 
-    public static function InitializeMyFleetPreset()
+    public static function InitializeEnemyFleet($presetNumber = 1)
     {
         self::$myFleet = GameController::initializeShips();
-
-        // self::$myFleet[0]->addPosition('B4');
-        // self::$myFleet[0]->addPosition('B5');
-        // self::$myFleet[0]->addPosition('B6');
-        // self::$myFleet[0]->addPosition('B7');
-        // self::$myFleet[0]->addPosition('B8');
-
-        array_push(self::$myFleet[0]->getPositions(), new Position('B', 4));
-        array_push(self::$myFleet[0]->getPositions(), new Position('B', 5));
-        array_push(self::$myFleet[0]->getPositions(), new Position('B', 6));
-        array_push(self::$myFleet[0]->getPositions(), new Position('B', 7));
-        array_push(self::$myFleet[0]->getPositions(), new Position('B', 8));
-
-        array_push(self::$myFleet[1]->getPositions(), new Position('E', 6));
-        array_push(self::$myFleet[1]->getPositions(), new Position('E', 7));
-        array_push(self::$myFleet[1]->getPositions(), new Position('E', 8));
-        array_push(self::$myFleet[1]->getPositions(), new Position('E', 5));
-
-        array_push(self::$myFleet[2]->getPositions(), new Position('A', 2));
-        array_push(self::$myFleet[2]->getPositions(), new Position('B', 2));
-        array_push(self::$myFleet[2]->getPositions(), new Position('C', 2));
-
-        array_push(self::$myFleet[3]->getPositions(), new Position('F', 8));
-        array_push(self::$myFleet[3]->getPositions(), new Position('G', 8));
-        array_push(self::$myFleet[3]->getPositions(), new Position('H', 8));
-
-        array_push(self::$myFleet[4]->getPositions(), new Position('C', 5));
-        array_push(self::$myFleet[4]->getPositions(), new Position('C', 6));
+        
+        $positions = match($presetNumber) {
+            1 => ShipPresets::getPreset1(),
+            2 => ShipPresets::getPreset2(),
+            3 => ShipPresets::getPreset3(),
+            default => ShipPresets::getPreset1(),
+        };
+        
+        for ($i = 0; $i < count(self::$myFleet); $i++) {
+            foreach ($positions[$i] as $position) {
+                array_push(self::$myFleet[$i]->getPositions(), $position);
+            }
+        }
     }
     private static function printFleetMap($fleet, $type)
     {
@@ -170,10 +156,12 @@ class App
 
     public static function InitializeGame()
     {
-        self::InitializeMyFleet();
-        // self::InitializeMyFleetPreset();
+        // self::InitializeMyFleet();
+        self::InitializeMyFleetPreset();
 
-        self::InitializeEnemyFleet();
+        $presetNumber = random_int(1, 3);
+
+        self::InitializeEnemyFleet($presetNumber);
 
         // self::$console->println("Enemy fleet :");
         // self::printFleetMap(self::$enemyFleet, 'enemy');
@@ -283,13 +271,14 @@ class App
                 self::$console->println();
             }
 
-            sleep(1);
-            self::$console->println();
-            self::$console->println("Enemy Shots:");
-            foreach (self::$enemyShots as $shot) {
-                self::$console->println($shot);
-            }
-            self::$console->println();
+            // sleep(1);
+            // self::$console->println();
+            
+            // self::$console->println("Enemy Shots:");
+            // foreach (self::$enemyShots as $shot) {
+            //     self::$console->println($shot);
+            // }
+            // self::$console->println();
 
             sleep(1);
             self::$console->println();
