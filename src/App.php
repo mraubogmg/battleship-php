@@ -297,13 +297,13 @@ class App
             }
 
             // sleep(1);
-            self::$console->println();
+            // self::$console->println();
             
-            self::$console->println("Enemy Shots:");
-            foreach (self::$enemyShots as $shot) {
-                self::$console->println($shot);
-            }
-            self::$console->println();
+            // self::$console->println("Enemy Shots:");
+            // foreach (self::$enemyShots as $shot) {
+            //     self::$console->println($shot);
+            // }
+            // self::$console->println();
 
             sleep(1);
             self::$console->println();
