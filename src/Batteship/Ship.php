@@ -9,6 +9,7 @@ class Ship
     private $size;
     private $color;
     private $positions = array();
+    private $shots = array();
 
     public function __construct($name, $size, $color = null)
     {
@@ -59,4 +60,20 @@ class Ship
         $this->size = $size;
     }
 
+        /**
+     * @return mixed
+     */
+    public function getShots()
+    {
+        return $this->shots;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function isSunk()
+    {
+        return count($this->shots) == $size;
+    }
+   
 }
