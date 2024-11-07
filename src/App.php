@@ -45,29 +45,29 @@ class App
 
     public static function InitializeMyFleetPreset()
     {
-        self::$enemyFleet = GameController::initializeShips();
+        self::$myFleet = GameController::initializeShips();
 
-        array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 4));
-        array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 5));
-        array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 6));
-        array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 7));
-        array_push(self::$enemyFleet[0]->getPositions(), new Position('B', 8));
+        array_push(self::$myFleet[0]->getPositions(), new Position('B', 4));
+        array_push(self::$myFleet[0]->getPositions(), new Position('B', 5));
+        array_push(self::$myFleet[0]->getPositions(), new Position('B', 6));
+        array_push(self::$myFleet[0]->getPositions(), new Position('B', 7));
+        array_push(self::$myFleet[0]->getPositions(), new Position('B', 8));
 
-        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 6));
-        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 7));
-        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 8));
-        array_push(self::$enemyFleet[1]->getPositions(), new Position('E', 9));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 6));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 7));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 8));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 9));
 
-        array_push(self::$enemyFleet[2]->getPositions(), new Position('A', 3));
-        array_push(self::$enemyFleet[2]->getPositions(), new Position('B', 3));
-        array_push(self::$enemyFleet[2]->getPositions(), new Position('C', 3));
+        array_push(self::$myFleet[2]->getPositions(), new Position('A', 3));
+        array_push(self::$myFleet[2]->getPositions(), new Position('B', 3));
+        array_push(self::$myFleet[2]->getPositions(), new Position('C', 3));
 
-        array_push(self::$enemyFleet[3]->getPositions(), new Position('F', 8));
-        array_push(self::$enemyFleet[3]->getPositions(), new Position('G', 8));
-        array_push(self::$enemyFleet[3]->getPositions(), new Position('H', 8));
+        array_push(self::$myFleet[3]->getPositions(), new Position('F', 8));
+        array_push(self::$myFleet[3]->getPositions(), new Position('G', 8));
+        array_push(self::$myFleet[3]->getPositions(), new Position('H', 8));
 
-        array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 5));
-        array_push(self::$enemyFleet[4]->getPositions(), new Position('C', 6));
+        array_push(self::$myFleet[4]->getPositions(), new Position('C', 5));
+        array_push(self::$myFleet[4]->getPositions(), new Position('C', 6));
     }
 
     public static function InitializeEnemyFleet($presetNumber = 1)
@@ -168,6 +168,7 @@ class App
         self::$console->println("Enemy preset number: " . $presetNumber);
 
         self::InitializeEnemyFleet($presetNumber);
+        self::printFleetMap(self::$enemyFleet, 'enemy');
 
         // self::$console->println("Enemy fleet :");
         // self::printFleetMap(self::$enemyFleet, 'enemy');
@@ -195,7 +196,7 @@ class App
         self::$console->println("   \\    \\_/");
         self::$console->println("    \" \"\" \"\" \"\" \"");
 
-        while (self::$round <= 64) {
+        while (self::$round <= 1) {
 
             sleep(1);
             self::$console->println();
@@ -338,6 +339,17 @@ class App
 
 //            exit();
         }
+
+    self::$console->setForegroundColor(Color::GREEN);
+    self::$console->println(" __     ______  _    _   __          _______ _   _ ");
+    self::$console->println(" \\ \\   / / __ \\| |  | |  \\ \\        / /_   _| \\ | |");
+    self::$console->println("  \\ \\_/ / |  | | |  | |   \\ \\  /\\  / /  | | |  \\| |");
+    self::$console->println("   \\   /| |  | | |  | |    \\ \\/  \\/ /   | | | . ` |");
+    self::$console->println("    | | | |__| | |__| |     \\  /\\  /   _| |_| |\\  |");
+    self::$console->println("    |_|  \\____/ \\____/       \\/  \\/   |_____|_| \\_|");
+    self::$console->resetForegroundColor();
+    self::$console->println("You won, try again!");
+        
     self::$console->setForegroundColor(Color::YELLOW);
     self::$console->println("  _____                         ____                 _ ");
     self::$console->println(" / ____|                       / __ \\               | |");
