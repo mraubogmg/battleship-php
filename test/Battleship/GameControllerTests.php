@@ -19,7 +19,7 @@ final class GameControllerTests extends TestCase
         foreach ($ships as $ship) {
             $letter = Letter::$letters[$counter];
 
-            for ($i = 0; $i < $ship->getSize(); $i++) {
+            for ($i = 1; $i < $ship->getSize(); $i++) {
                 array_push($ship->getPositions(), new Position($letter, $i));
             }
 
@@ -39,7 +39,7 @@ final class GameControllerTests extends TestCase
         foreach ($ships as $ship) {
             $letter = Letter::$letters[$counter];
 
-            for ($i = 0; $i < $ship->getSize(); $i++) {
+            for ($i = 1; $i < $ship->getSize(); $i++) {
                 array_push($ship->getPositions(), new Position($letter, $i));
             }
 
