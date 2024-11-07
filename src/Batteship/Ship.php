@@ -81,7 +81,7 @@ class Ship
      */
     public function isSunk()
     {
-        return count($this->shots) == $size;
+        return count($this->shots) == $this->size;
     }
    
 }
