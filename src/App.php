@@ -16,6 +16,7 @@ class App
     private static $myHits = array();
     private static $enemyShots = array();
     private static $enemyHits = array();
+    private static $shots = array();
 
     static function run()
     {
@@ -237,6 +238,8 @@ class App
             $position = readline("");
             self::$console->println();
 
+            $position = self::isMultipleHit($position);
+            array_push(self::$shots, $position);
 
             $isHit = GameController::checkIsHit(self::$enemyFleet, strtoupper($position));
             if ($isHit) {
@@ -351,6 +354,23 @@ class App
 
 
 
+    }
+
+    private static function isMultipleHit($position) {
+        foreach (self::$shots as $shot) {
+            if ($position == $shot) {
+                self::$console->println("Duplicate shot! Enter coordinates for your shot again:");
+                self::$console->resetForegroundColor();
+    
+                self::$console->println();
+    
+                $position = readline("");
+                self::$console->println();
+                $position = self::isMultipleHit($position);
+    
+            }
+        }
+        return $position;
     }
 
     public static function parsePosition($input)
