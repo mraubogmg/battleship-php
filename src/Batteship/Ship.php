@@ -71,6 +71,14 @@ class Ship
     /**
      * @return mixed
      */
+    public function addShot($position)
+    {
+        return $this->shots[] = $position;
+    }
+
+    /**
+     * @return mixed
+     */
     public function isSunk()
     {
         return count($this->shots) == $size;
