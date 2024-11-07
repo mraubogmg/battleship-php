@@ -160,8 +160,8 @@ class App
 
     public static function InitializeGame()
     {
-        // self::InitializeMyFleet();
-        self::InitializeMyFleetPreset();
+        self::InitializeMyFleet();
+        // self::InitializeMyFleetPreset();
 
         $presetNumber = random_int(1, 7);
 
