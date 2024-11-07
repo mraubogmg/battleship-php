@@ -404,6 +404,25 @@ class App
         return $sunkedShips;
     }
 
+    private static function isEndOfGame() {
+        $myFleet = self::$myFleet;
+        $enemyFleet = self::$enemyFleet;
+                                                                     
+        foreach ($myFleet as $key => $ship) {
+            if ($ship->isSunk()) {
+                unset($myFleet[$key]);
+            } 
+        }
+
+        foreach ($enemyFleet as $key => $ship) {
+            if ($ship->isSunk()) {
+                unset($enemyFleet[$key]);
+            } 
+        }
+        
+        return empty($myFleet) or empty($enemyFleet);
+    }
+    
     public static function parsePosition($input)
     {
         if (strlen($input) != 2) {
