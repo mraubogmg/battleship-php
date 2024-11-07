@@ -53,10 +53,10 @@ class App
         array_push(self::$myFleet[0]->getPositions(), new Position('B', 7));
         array_push(self::$myFleet[0]->getPositions(), new Position('B', 8));
 
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 5));
         array_push(self::$myFleet[1]->getPositions(), new Position('E', 6));
         array_push(self::$myFleet[1]->getPositions(), new Position('E', 7));
         array_push(self::$myFleet[1]->getPositions(), new Position('E', 8));
-        array_push(self::$myFleet[1]->getPositions(), new Position('E', 9));
 
         array_push(self::$myFleet[2]->getPositions(), new Position('A', 3));
         array_push(self::$myFleet[2]->getPositions(), new Position('B', 3));
@@ -230,7 +230,16 @@ class App
 
             self::$console->println();
 
-            $position = readline("");
+            $position = trim(readline(""));
+
+            try {
+                $position = Position::fromString($position);
+            } catch (Exception $e) {
+                self::$console->setForegroundColor(Color::RED);
+                print 'Position is invalid, please try again';
+                continue;
+            }
+
             self::$console->println();
 
             $position = self::isMultipleHit($position);

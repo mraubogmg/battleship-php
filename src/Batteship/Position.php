@@ -2,6 +2,8 @@
 
 namespace Battleship;
 
+use InvalidArgumentException;
+
 class Position
 {
     /**
@@ -18,7 +20,7 @@ class Position
     public function __construct($letter, $number)
     {
         $this->column = Letter::validate(strtoupper($letter));
-        $this->row = $number;
+        $this->row = Row::validate($number);
     }
 
     public function getColumn()
@@ -36,5 +38,16 @@ class Position
         return sprintf("%s%s", $this->column, $this->row);
     }
 
+    public static function fromString($position)
+    {
+        $position = str_split($position);
 
+        if (count($position) != 2) {
+            throw new InvalidArgumentException('Invalid position');
+        }
+
+        list($letter, $number) = $position;
+
+        return new self($letter, $number);
+    }
 }
