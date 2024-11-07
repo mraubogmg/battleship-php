@@ -165,10 +165,10 @@ class App
 
         $presetNumber = random_int(1, 7);
 
-        self::$console->println("Enemy preset number: " . $presetNumber);
+        // self::$console->println("Enemy preset number: " . $presetNumber);
 
         self::InitializeEnemyFleet($presetNumber);
-        self::printFleetMap(self::$enemyFleet, 'enemy');
+        // self::printFleetMap(self::$enemyFleet, 'enemy');
 
         // self::$console->println("Enemy fleet :");
         // self::printFleetMap(self::$enemyFleet, 'enemy');
