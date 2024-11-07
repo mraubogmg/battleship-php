@@ -11,8 +11,11 @@ class App
     private static $enemyFleet = array();
     private static $round = 1;
     private static $console;
-    private static $lastPosition = null;
-    private static $lastIsHit = null;
+
+    private static $myShots = array();
+    private static $myHits = array();
+    private static $enemyShots = array();
+    private static $enemyHits = array();
 
     static function run()
     {
@@ -81,21 +84,21 @@ class App
         array_push(self::$myFleet[0]->getPositions(), new Position('B', 7));
         array_push(self::$myFleet[0]->getPositions(), new Position('B', 8));
 
-        // array_push(self::$myFleet[1]->getPositions(), new Position('E', 6));
-        // array_push(self::$myFleet[1]->getPositions(), new Position('E', 7));
-        // array_push(self::$myFleet[1]->getPositions(), new Position('E', 8));
-        // array_push(self::$myFleet[1]->getPositions(), new Position('E', 5));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 6));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 7));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 8));
+        array_push(self::$myFleet[1]->getPositions(), new Position('E', 5));
 
-        // array_push(self::$myFleet[2]->getPositions(), new Position('A', 2));
-        // array_push(self::$myFleet[2]->getPositions(), new Position('B', 2));
-        // array_push(self::$myFleet[2]->getPositions(), new Position('C', 2));
+        array_push(self::$myFleet[2]->getPositions(), new Position('A', 2));
+        array_push(self::$myFleet[2]->getPositions(), new Position('B', 2));
+        array_push(self::$myFleet[2]->getPositions(), new Position('C', 2));
 
-        // array_push(self::$myFleet[3]->getPositions(), new Position('F', 8));
-        // array_push(self::$myFleet[3]->getPositions(), new Position('G', 8));
-        // array_push(self::$myFleet[3]->getPositions(), new Position('H', 8));
+        array_push(self::$myFleet[3]->getPositions(), new Position('F', 8));
+        array_push(self::$myFleet[3]->getPositions(), new Position('G', 8));
+        array_push(self::$myFleet[3]->getPositions(), new Position('H', 8));
 
-        // array_push(self::$myFleet[4]->getPositions(), new Position('C', 5));
-        // array_push(self::$myFleet[4]->getPositions(), new Position('C', 6));
+        array_push(self::$myFleet[4]->getPositions(), new Position('C', 5));
+        array_push(self::$myFleet[4]->getPositions(), new Position('C', 6));
     }
     private static function printFleetMap($fleet, $type)
     {
@@ -103,11 +106,11 @@ class App
 
         self::$console->println("\n  1 2 3 4 5 6 7 8");
         self::$console->println("  ---------------");
-        
+
         for ($i = 0; $i < 8; $i++) {
             $letter = Letter::value($i);
             echo $letter . "|";
-            
+
             for ($j = 1; $j <= 8; $j++) {
                 $hasShip = false;
                 foreach ($fleet as $ship) {
@@ -132,7 +135,7 @@ class App
         $lines = 8;
 
         $letter = Letter::value(random_int(0, $lines - 1));
-        $number = random_int(0, $rows - 1);
+        $number = random_int(1, $rows);
 
         return new Position($letter, $number);
     }
@@ -168,13 +171,13 @@ class App
     {
         self::InitializeMyFleet();
         // self::InitializeMyFleetPreset();
-        
+
         self::InitializeEnemyFleet();
-        
+
         // self::$console->println("Enemy fleet :");
         // self::printFleetMap(self::$enemyFleet, 'enemy');
         // print_r(self::$enemyFleet);
-        
+
         // self::$console->println("My fleet :");
         // self::printFleetMap(self::$myFleet, 'my');
         // print_r(self::$myFleet);
@@ -197,7 +200,7 @@ class App
         self::$console->println("   \\    \\_/");
         self::$console->println("    \" \"\" \"\" \"\" \"");
 
-        while (true) {
+        while (self::$round <= 64) {
 
             sleep(1);
             self::$console->println();
@@ -220,15 +223,11 @@ class App
             self::$console->println("Player, it's your turn");
             self::$console->println();
 
-        
-            // if (self::$lastPosition !== null) {
-            //     printf("Last position was %s%s", self::$lastPosition, '');
-            // }
-
-            // if (self::$lastIsHit !== null) {
-            //     printf("Last shot was %s", self::$lastIsHit ? "hit" : "miss");
-            // }
-            
+            if (count(self::$myShots) > 0) {
+                self::$console->println(sprintf("Last shot was on position %s and it was a %s", self::$myShots[count(self::$myShots) - 1], self::$myHits[count(self::$myHits) - 1] ? "hit" : "miss"));
+                self::$console->println();
+                self::$console->println();
+            }
 
             self::$console->println("Enter coordinates for your shot :");
             self::$console->resetForegroundColor();
@@ -243,7 +242,7 @@ class App
             if ($isHit) {
                 self::beep();
                 self::$console->setForegroundColor(Color::RED);
-                
+
                 self::$console->println("                \\         .  ./");
                 self::$console->println("              \\      .:\" \";'.:..\" \"   /");
                 self::$console->println("                  (M^^.^~~:.'\" \").");
@@ -255,7 +254,7 @@ class App
                 self::$console->println("");
                 self::$console->println("Yeah ! Nice hit !");
                 self::$console->resetForegroundColor();
-            } 
+            }
             else {
                 self::$console->setForegroundColor(Color::CADET_BLUE);
                 self::$console->println("    ~~~~ ~~~~ ~~~~ ~~~~");
@@ -266,23 +265,41 @@ class App
                 self::$console->resetForegroundColor();
 
             }
-            // self::$lastPosition = $position;
 
-            // self::$lastIsHit = $isHit;
+            array_push(self::$myShots, strtoupper($position));
+            array_push(self::$myHits, $isHit);
 
-            
+
             sleep(1);
             self::$console->println();
             self::$console->println("It's now the computer's turn.");
 
+            if (count(self::$enemyShots) > 0) {
+                self::$console->println(sprintf("Last shot was on position %s and it was a %s", self::$enemyShots[count(self::$enemyShots) - 1], self::$enemyHits[count(self::$enemyHits) - 1] ? "hit" : "miss"));
+                self::$console->println();
+                self::$console->println();
+            }
+
+            sleep(1);
+            self::$console->println();
+            self::$console->println("Enemy Shots:");
+            foreach (self::$enemyShots as $shot) {
+                self::$console->println($shot);
+            }
+            self::$console->println();
 
             sleep(1);
             self::$console->println();
             self::$console->println("--------------------------------");
             self::$console->println();
             self::$console->setForegroundColor(Color::PURPLE);
-            
+
             $position = self::getRandomPosition();
+
+            while (in_array($position, self::$enemyShots)) {
+                $position = self::getRandomPosition();
+            }
+
             $isHit = GameController::checkIsHit(self::$myFleet, $position);
             self::$console->println();
             printf("Computer shoot in %s%s", $position->getColumn(), $position->getRow());
@@ -302,7 +319,7 @@ class App
                 self::$console->println("                 -\\  \\     /  /-");
                 self::$console->println("                   \\  \\   /  /");
                 self::$console->println("Computer hit your ship !");
-                
+
                 self::$console->resetForegroundColor();
             } else {
                 self::$console->println("");
@@ -315,11 +332,25 @@ class App
                 self::$console->resetForegroundColor();
             }
 
+            array_push(self::$enemyShots, $position);
+            array_push(self::$enemyHits, $isHit);
+
             self::$round++;
             sleep(1);
 
 //            exit();
         }
+    self::$console->setForegroundColor(Color::YELLOW);
+    self::$console->println("  _____                         ____                 _ ");
+    self::$console->println(" / ____|                       / __ \\               | |");
+    self::$console->println("| |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __| |");
+    self::$console->println("| | |_ |/ _` | '_ ` _ \\ / _ \\ | |  | \\ \\ / / _ \\ '__| |");
+    self::$console->println("| |__| | (_| | | | | | |  __/ | |__| |\\ V /  __/ |  |_|");
+    self::$console->println(" \\_____|\\__,_|_| |_| |_|\\___|  \\____/  \\_/ \\___|_|  (_)");
+    self::$console->resetForegroundColor();
+
+
+
     }
 
     public static function parsePosition($input)
