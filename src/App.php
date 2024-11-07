@@ -197,7 +197,11 @@ class App
         self::$console->println("    \" \"\" \"\" \"\" \"");
 
         while (self::$round <= 64) {
-
+            if (!self::isEndOfGame()) {
+                self::$console->println("++++++++++++++++++++++++++++++++++++++++++");
+                self::$console->println("The game is still going on!");
+                self::$console->println();
+            }
             sleep(1);
             self::$console->println();
 
