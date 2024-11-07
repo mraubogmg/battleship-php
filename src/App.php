@@ -72,7 +72,7 @@ class App
 
     public static function InitializeEnemyFleet($presetNumber = 1)
     {
-        self::$myFleet = GameController::initializeShips();
+        self::$enemyFleet = GameController::initializeShips();
         
         $positions = match($presetNumber) {
             1 => ShipPresets::getPreset1(),
@@ -87,7 +87,7 @@ class App
         
         for ($i = 0; $i < count(self::$myFleet); $i++) {
             foreach ($positions[$i] as $position) {
-                array_push(self::$myFleet[$i]->getPositions(), $position);
+                array_push(self::$enemyFleet[$i]->getPositions(), $position);
             }
         }
     }
