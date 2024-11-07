@@ -248,7 +248,7 @@ class App
                 $position = Position::fromString($position);
             } catch (Exception $e) {
                 self::$console->setForegroundColor(Color::RED);
-                print 'Position is invalid, please try again';
+                self::$console->println('Position is invalid, please try again!');
                 continue;
             }
 
