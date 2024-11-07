@@ -20,6 +20,7 @@ class GameController
         foreach ($fleet as $ship) {
             foreach ($ship->getPositions() as $position) {
                 if ($position == $shot) {
+                    $ship->addShot($shot);
                     return true;
                 }
             }
