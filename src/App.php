@@ -196,7 +196,7 @@ class App
         self::$console->println("   \\    \\_/");
         self::$console->println("    \" \"\" \"\" \"\" \"");
 
-        while (self::$round <= 1) {
+        while (self::$round <= 64) {
 
             sleep(1);
             self::$console->println();
