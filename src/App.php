@@ -225,6 +225,11 @@ class App
                 self::$console->println();
             }
 
+            self::$console->println("Sunked your ships: " . implode(", ", self::getSunkedShips(self::$myFleet)));
+            self::$console->println();
+            self::$console->println("Sunked enemy ships: " . implode(", ", self::getSunkedShips(self::$enemyFleet)));
+            self::$console->println();
+
             self::$console->println("Enter coordinates for your shot :");
             self::$console->resetForegroundColor();
 
@@ -387,6 +392,16 @@ class App
             }
         }
         return $position;
+    }
+
+    private static function getSunkedShips($fleet) {
+        $sunkedShips = [];
+        foreach ($fleet as $ship) {
+            if ($ship->isSunk()) {
+                $sunkedShips[] = $ship->getName();
+            } 
+        }
+        return $sunkedShips;
     }
 
     public static function parsePosition($input)
