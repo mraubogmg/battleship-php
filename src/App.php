@@ -152,8 +152,8 @@ class App
                 $col = intval(substr($position, 1)) - 1;
             }
 
-            // Mark hit with 'X', miss with '*'
-            $grid[$row][$col] = $hits[$i] ? 'X' : '*';
+            // Mark hit with 'X', miss with '~'
+            $grid[$row][$col] = $hits[$i] ? 'X' : '~';
         }
 
         // Print column headers (1-8)
@@ -218,6 +218,8 @@ class App
         self::$console->println("D = Destroyer");
         self::$console->println("P = Patrol Boat");
         self::$console->println(". = Empty water");
+        self::$console->println("X = Hit");
+        self::$console->println("~ = Miss");
     }
 
     public static function printFleetMaps()
