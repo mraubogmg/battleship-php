@@ -483,34 +483,7 @@ class App
         }
 
         if (count(self::getSunkedShips(self::$myFleet)) !== 5) {
-            self::$console->setForegroundColor(Color::GREEN);
-            self::$console->println(" __     ______  _    _   __          _______ _   _ ");
-            self::$console->println(" \\ \\   / / __ \\| |  | |  \\ \\        / /_   _| \\ | |");
-            self::$console->println("  \\ \\_/ / |  | | |  | |   \\ \\  /\\  / /  | | |  \\| |");
-            self::$console->println("   \\   /| |  | | |  | |    \\ \\/  \\/ /   | | | . ` |");
-            self::$console->println("    | | | |__| | |__| |     \\  /\\  /   _| |_| |\\  |");
-            self::$console->println("    |_|  \\____/ \\____/       \\/  \\/   |_____|_| \\_|");
-            self::$console->resetForegroundColor();
-            self::$console->println("You won, try again!");
-            self::$console->println();
-
-
-            // Displaying a simple animation
-            for ($i = 0; $i < 10; $i++) {
-                if ($i > 0) {
-                    self::$console->println("\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K");  // Move up and clear line
-                }
-                self::$console->println(" \\o/");
-                self::$console->println("  |");
-                self::$console->println(" / \\");
-                usleep(500000); // Sleep for 0.5 seconds
-                self::$console->println("\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K");  // Move up and clear line
-                self::$console->println("  o");
-                self::$console->println(" /|\\");
-                self::$console->println(" / \\");
-                usleep(500000); // Sleep for 0.5 seconds
-            }
-
+            self::showWinAnimation();
         } else {
             self::$console->setForegroundColor(Color::YELLOW);
             self::$console->println("  _____                         ____                 _ ");
@@ -592,4 +565,40 @@ class App
 
         return new Position($letter, $number);
     }
+
+    private static function showWinAnimation() {
+        // The ASCII art of the ship.
+        $ship = file_get_contents('img/win.txt');
+
+        // The width of the ship, count the number of characters in the longest line.
+        $shipWidth = max(array_map('strlen', explode("\n", $ship)));
+
+        // Determine the width of the terminal window.
+        $terminalWidth = 300;
+
+        // Direction can be 1 (right) or -1 (left)
+        $direction = 1;
+        $i = 0;
+
+        self::$console->setForegroundColor(Color::GREEN);
+
+        // Loop indefinitely to move back and forth
+        while (true) {
+            // Clear the screen, move cursor to top left, and print the frame.
+            self::$console->println("\033[H\033[J" . preg_replace('/^/m', str_repeat(' ', $i), $ship));
+
+            // Wait for 0.1 seconds
+            usleep(100000);
+
+            // If we've hit either edge, reverse the direction.
+            if (($i <= 0 && $direction == -1) || ($i >= ($terminalWidth - $shipWidth) && $direction == 1)) {
+                $direction *= -1;
+            }
+
+            // Move the ship in the current direction.
+            $i += $direction;
+        }
+    }
+
+
 }
