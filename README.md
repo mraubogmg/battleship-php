@@ -3,7 +3,7 @@
 # Battleship PHP
 
 A simple game of Battleship, written in PHP. The purpose of this repository is to serve as an entry point into coding exercises and it was especially created for scrum.orgs Applying Professional Scrum for Software Development course (www.scrum.org/apssd). The code in this repository is unfinished by design.
-Created by Sergey https://github.com/2heoh 
+Created by Sergey https://github.com/2heoh
 
 # Getting started
 
@@ -56,6 +56,52 @@ docker run -it -v ${PWD}:/battleship -w /battleship composer bash
 composer run game
 ```
 
+with arguments
+
+display all output from game
+```bash
+composer run game -- --godmode
+```
+
+set player ships from preset
+```bash
+composer run game -- --preset
+```
+
+easy mode, display map for playr shots
+```bash
+composer run game -- --easy
+```
+
+autoplay mode
+```bash
+composer run game -- --autoplay
+```
+
+
+
+example of map in godmode
+
+```bash
+  1 2 3 4 5 6 7 8
+A B . . . . . . .
+B B . . . . . P P
+C B . . . . . . .
+D B . . . . . . .
+E . . . . . . . .
+F . . S S S . . .
+G . . . . . . . .
+H . . . . . D D D
+```
+
+Where:
+- A = Aircraft Carrier
+- B = Battleship
+- S = Submarine
+D = Destroyer
+- P = Patrol Boat
+- . = Empty water
+
 # Running the Tests
 
 Don't forget to install dependencies ;)
@@ -68,7 +114,7 @@ Run tests:
 composer run test
 ```
 
-### Troubleshooting 
+### Troubleshooting
 
 1. On my ubuntu virtual server on DO I needed to install:
 ```bash
