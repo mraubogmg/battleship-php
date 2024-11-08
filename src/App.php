@@ -19,8 +19,38 @@ class App
     private static $enemyHits = array();
     private static $shots = array();
 
-    static function run()
+
+    private static $isGodMode = false;
+    private static $presetPlayer = false;
+    private static $presetNumber = 1;
+    private static $easy = false;
+    private static $autoplay = false;
+
+    public static function run($args)
     {
+
+        foreach ($args as $arg) {
+            if ($arg === '--godmode') {
+                echo "Godmode activated!" . PHP_EOL;
+                self::$isGodMode = true;
+            }
+
+            if ($arg === '--preset') {
+                echo "Preset is activated!" . PHP_EOL;
+                self::$presetPlayer = true;
+            }
+
+            if ($arg === '--easy') {
+                echo "Easy mode activated!" . PHP_EOL;
+                self::$easy = true;
+            }
+
+            if ($arg === '--autoplay') {
+                echo "Autoplay mode activated!" . PHP_EOL;
+                self::$autoplay = true;
+            }
+        }
+
         self::$console = new Console();
         self::$console->setForegroundColor(Color::MAGENTA);
 
@@ -70,11 +100,11 @@ class App
         array_push(self::$myFleet[4]->getPositions(), new Position('C', 6));
     }
 
-    public static function InitializeEnemyFleet($presetNumber = 1)
+    public static function InitializeEnemyFleet()
     {
         self::$enemyFleet = GameController::initializeShips();
-        
-        $positions = match($presetNumber) {
+
+        $positions = match(self::$presetNumber) {
             1 => ShipPresets::getPreset1(),
             2 => ShipPresets::getPreset2(),
             3 => ShipPresets::getPreset3(),
@@ -84,7 +114,7 @@ class App
             7 => ShipPresets::getPreset7(),
             default => ShipPresets::getPreset1(),
         };
-        
+
         for ($i = 0; $i < count(self::$myFleet); $i++) {
             foreach ($positions[$i] as $position) {
                 array_push(self::$enemyFleet[$i]->getPositions(), $position);
@@ -93,30 +123,48 @@ class App
     }
     private static function printFleetMap($fleet, $type)
     {
-        sleep(1);
+        // Create empty 8x8 grid filled with '.'
+        $grid = array_fill(0, 8, array_fill(0, 8, '.'));
 
-        self::$console->println("\n  1 2 3 4 5 6 7 8");
-        self::$console->println("  ---------------");
-
-        for ($i = 0; $i < 8; $i++) {
-            $letter = Letter::value($i);
-            echo $letter . "|";
-
-            for ($j = 1; $j <= 8; $j++) {
-                $hasShip = false;
-                foreach ($fleet as $ship) {
-                    foreach ($ship->getPositions() as $position) {
-                        if ($position->getColumn() === $letter && $position->getRow() === $j) {
-                            $hasShip = true;
-                            break 2;
-                        }
-                    }
+        if (self::$isGodMode || $type === 'my') {
+            // Fill grid with ship positions
+            foreach ($fleet as $ship) {
+                foreach ($ship->getPositions() as $position) {
+                    $row = ord($position->getColumn()) - ord('A');
+                    $col = $position->getRow() - 1;
+                    $grid[$row][$col] = substr($ship->getName(), 0, 1); // First letter of ship name
                 }
-                echo ($hasShip ? "■ " : "· ");
             }
-            echo "\n";
         }
-        echo "\n";
+
+        // Mark shots on the grid
+        $shots = ($type === 'enemy') ? self::$myShots : self::$enemyShots;
+        $hits = ($type === 'enemy') ? self::$myHits : self::$enemyHits;
+
+        for ($i = 0; $i < count($shots); $i++) {
+            $position = $shots[$i];
+            if ($position instanceof Position) {
+                $row = ord($position->getColumn()) - ord('A');
+                $col = $position->getRow() - 1;
+            } else {
+                // Handle string positions (e.g., "A1")
+                $row = ord(substr($position, 0, 1)) - ord('A');
+                $col = intval(substr($position, 1)) - 1;
+            }
+
+            // Mark hit with 'X', miss with '*'
+            $grid[$row][$col] = $hits[$i] ? 'X' : '*';
+        }
+
+        // Print column headers (1-8)
+        echo "  1 2 3 4 5 6 7 8\n";
+
+        // Print rows with row headers (A-H)
+        for ($i = 0; $i < 8; $i++) {
+            echo chr(ord('A') + $i) . ' ' . implode(' ', $grid[$i]) . "\n";
+        }
+
+        // Still save the original debug output to file
         file_put_contents($type . 'Fleet.txt', print_r($fleet, true));
     }
 
@@ -155,36 +203,64 @@ class App
 
     public static function beep()
     {
-        echo "\007";
+        if (!self::$autoplay) {
+            echo "\007";
+        }
+    }
+
+    public static function printLegend()
+    {
+        self::$console->println("");
+        self::$console->println("Legend:");
+        self::$console->println("A = Aircraft Carrier");
+        self::$console->println("B = Battleship");
+        self::$console->println("S = Submarine");
+        self::$console->println("D = Destroyer");
+        self::$console->println("P = Patrol Boat");
+        self::$console->println(". = Empty water");
+    }
+
+    public static function printFleetMaps()
+    {
+
+        if (self::$isGodMode || self::$easy) {
+        self::$console->println("");
+
+            self::$console->println("Enemy fleet :");
+        self::printFleetMap(self::$enemyFleet, 'enemy');
+        }
+
+        self::$console->println("");
+
+        self::$console->println("My fleet :");
+        self::printFleetMap(self::$myFleet, 'my');
+
+        self::$console->println("");
+
+        // if (self::$isGodMode) {
+            self::printLegend();
+        // }
     }
 
     public static function InitializeGame()
     {
-        self::InitializeMyFleet();
-        // self::InitializeMyFleetPreset();
+        if (self::$presetPlayer) {
+            self::InitializeMyFleetPreset();
+        } else {
+            self::InitializeMyFleet();
+        }
+        if (self::$isGodMode) {
+            self::$console->println("Enemy preset number: " . self::$presetNumber);
+            self::$console->println("");
+        }
 
-        $presetNumber = random_int(1, 7);
-
-        // self::$console->println("Enemy preset number: " . $presetNumber);
-
-        self::InitializeEnemyFleet($presetNumber);
-        // self::printFleetMap(self::$enemyFleet, 'enemy');
-
-        // self::$console->println("Enemy fleet :");
-        // self::printFleetMap(self::$enemyFleet, 'enemy');
-        // print_r(self::$enemyFleet);
-
-        // self::$console->println("My fleet :");
-        // self::printFleetMap(self::$myFleet, 'my');
-        // print_r(self::$myFleet);
-
-    // file_put_contents('enemyFleet.txt', print_r(self::$enemyFleet, true));
-    // file_put_contents('myFleet.txt', print_r(self::$myFleet, true));
+        self::$presetNumber = random_int(1, 7);
+        self::InitializeEnemyFleet();
     }
 
     public static function StartGame()
     {
-        self::$console->println("\033[2J\033[;H");
+        // self::$console->println("\033[2J\033[;H");
         self::$console->println("                  __");
         self::$console->println("                 /  \\");
         self::$console->println("           .-.  |    |");
@@ -205,7 +281,9 @@ class App
                 self::$console->println("The game is still going on!");
                 self::$console->println();
             }
-            sleep(1);
+            if (!self::$autoplay) {
+                sleep(1);
+            }
             self::$console->println();
 
             self::$console->println();
@@ -216,10 +294,13 @@ class App
 
             self::$console->println("++++++++++++++++++++++++++++++++++++++++++");
             self::$console->resetForegroundColor();
+            self::printFleetMaps();
 
             self::$console->println();
 
-            sleep(1);
+            if (!self::$autoplay) {
+                sleep(1);
+            }
             self::$console->println("");
             self::$console->setForegroundColor(Color::CHARTREUSE);
 
@@ -242,7 +323,19 @@ class App
 
             self::$console->println();
 
-            $position = trim(readline(""));
+            $position = '';
+
+            if (self::$autoplay) {
+                $position = self::getRandomPosition();
+
+                while (in_array($position, self::$myShots)) {
+                    $position = self::getRandomPosition();
+                }
+
+                self::$console->println(sprintf("Your shot is in %s%s", $position->getColumn(), $position->getRow()));
+            } else {
+                $position = trim(readline(""));
+            }
 
             try {
                 $position = Position::fromString($position);
@@ -253,6 +346,7 @@ class App
             }
 
             self::$console->println();
+
 
             $position = self::isMultipleHit($position);
             array_push(self::$shots, $position);
@@ -289,7 +383,14 @@ class App
             array_push(self::$myHits, $isHit);
 
 
-            sleep(1);
+            if (!self::$autoplay) {
+                sleep(1);
+            }
+
+            if(self::isEndOfGame()) {
+                break;
+            }
+
             self::$console->println();
             self::$console->println("It's now the computer's turn.");
 
@@ -299,16 +400,25 @@ class App
                 self::$console->println();
             }
 
-            // sleep(1);
-            // self::$console->println();
-            
-            // self::$console->println("Enemy Shots:");
-            // foreach (self::$enemyShots as $shot) {
-            //     self::$console->println($shot);
-            // }
-            // self::$console->println();
 
-            sleep(1);
+            if (self::$isGodMode) {
+                if (!self::$autoplay) {
+                    sleep(1);
+                }
+                self::$console->println();
+                self::$console->println("Enemy Shots:");
+                foreach (self::$enemyShots as $shot) {
+                    self::$console->println($shot);
+                }
+                self::$console->println();
+            }
+
+            if (!self::$autoplay) {
+                sleep(1);
+            }
+
+
+
             self::$console->println();
             self::$console->println("--------------------------------");
             self::$console->println();
@@ -356,31 +466,60 @@ class App
             array_push(self::$enemyHits, $isHit);
 
             self::$round++;
-            sleep(1);
+            if (!self::$autoplay) {
+                sleep(1);
+            }
 
 //            exit();
         }
 
-    self::$console->setForegroundColor(Color::GREEN);
-    self::$console->println(" __     ______  _    _   __          _______ _   _ ");
-    self::$console->println(" \\ \\   / / __ \\| |  | |  \\ \\        / /_   _| \\ | |");
-    self::$console->println("  \\ \\_/ / |  | | |  | |   \\ \\  /\\  / /  | | |  \\| |");
-    self::$console->println("   \\   /| |  | | |  | |    \\ \\/  \\/ /   | | | . ` |");
-    self::$console->println("    | | | |__| | |__| |     \\  /\\  /   _| |_| |\\  |");
-    self::$console->println("    |_|  \\____/ \\____/       \\/  \\/   |_____|_| \\_|");
-    self::$console->resetForegroundColor();
-    self::$console->println("You won, try again!");
-        
-    self::$console->setForegroundColor(Color::YELLOW);
-    self::$console->println("  _____                         ____                 _ ");
-    self::$console->println(" / ____|                       / __ \\               | |");
-    self::$console->println("| |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __| |");
-    self::$console->println("| | |_ |/ _` | '_ ` _ \\ / _ \\ | |  | \\ \\ / / _ \\ '__| |");
-    self::$console->println("| |__| | (_| | | | | | |  __/ | |__| |\\ V /  __/ |  |_|");
-    self::$console->println(" \\_____|\\__,_|_| |_| |_|\\___|  \\____/  \\_/ \\___|_|  (_)");
-    self::$console->resetForegroundColor();
+        if (self::$isGodMode) {
+            self::$console->println("Sunked your ships: " . implode(", ", self::getSunkedShips(self::$myFleet)));
+            self::$console->println();
+            self::$console->println("Sunked enemy ships: " . implode(", ", self::getSunkedShips(self::$enemyFleet)));
+            self::$console->println();
+        }
+
+        if (count(self::getSunkedShips(self::$myFleet)) !== 5) {
+            self::$console->setForegroundColor(Color::GREEN);
+            self::$console->println(" __     ______  _    _   __          _______ _   _ ");
+            self::$console->println(" \\ \\   / / __ \\| |  | |  \\ \\        / /_   _| \\ | |");
+            self::$console->println("  \\ \\_/ / |  | | |  | |   \\ \\  /\\  / /  | | |  \\| |");
+            self::$console->println("   \\   /| |  | | |  | |    \\ \\/  \\/ /   | | | . ` |");
+            self::$console->println("    | | | |__| | |__| |     \\  /\\  /   _| |_| |\\  |");
+            self::$console->println("    |_|  \\____/ \\____/       \\/  \\/   |_____|_| \\_|");
+            self::$console->resetForegroundColor();
+            self::$console->println("You won, try again!");
+            self::$console->println();
 
 
+            // Displaying a simple animation
+            for ($i = 0; $i < 10; $i++) {
+                if ($i > 0) {
+                    self::$console->println("\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K");  // Move up and clear line
+                }
+                self::$console->println(" \\o/");
+                self::$console->println("  |");
+                self::$console->println(" / \\");
+                usleep(500000); // Sleep for 0.5 seconds
+                self::$console->println("\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K\033[1A\033[2K");  // Move up and clear line
+                self::$console->println("  o");
+                self::$console->println(" /|\\");
+                self::$console->println(" / \\");
+                usleep(500000); // Sleep for 0.5 seconds
+            }
+
+        } else {
+            self::$console->setForegroundColor(Color::YELLOW);
+            self::$console->println("  _____                         ____                 _ ");
+            self::$console->println(" / ____|                       / __ \\               | |");
+            self::$console->println("| |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __| |");
+            self::$console->println("| | |_ |/ _` | '_ ` _ \\ / _ \\ | |  | \\ \\ / / _ \\ '__| |");
+            self::$console->println("| |__| | (_| | | | | | |  __/ | |__| |\\ V /  __/ |  |_|");
+            self::$console->println(" \\_____|\\__,_|_| |_| |_|\\___|  \\____/  \\_/ \\___|_|  (_)");
+            self::$console->resetForegroundColor();
+            self::$console->println("You lost, try again!");
+        }
 
     }
 
@@ -389,13 +528,13 @@ class App
             if ($position == $shot) {
                 self::$console->println("Duplicate shot! Enter coordinates for your shot again:");
                 self::$console->resetForegroundColor();
-    
+
                 self::$console->println();
-    
+
                 $position = readline("");
                 self::$console->println();
                 $position = self::isMultipleHit($position);
-    
+
             }
         }
         return $position;
@@ -406,7 +545,7 @@ class App
         foreach ($fleet as $ship) {
             if ($ship->isSunk()) {
                 $sunkedShips[] = $ship->getName();
-            } 
+            }
         }
         return $sunkedShips;
     }
@@ -414,22 +553,22 @@ class App
     private static function isEndOfGame() {
         $myFleet = self::$myFleet;
         $enemyFleet = self::$enemyFleet;
-                                                                     
+
         foreach ($myFleet as $key => $ship) {
             if ($ship->isSunk()) {
                 unset($myFleet[$key]);
-            } 
+            }
         }
 
         foreach ($enemyFleet as $key => $ship) {
             if ($ship->isSunk()) {
                 unset($enemyFleet[$key]);
-            } 
+            }
         }
-        
+
         return empty($myFleet) or empty($enemyFleet);
     }
-    
+
     public static function parsePosition($input)
     {
         if (strlen($input) != 2) {

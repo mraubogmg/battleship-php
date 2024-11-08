@@ -2,9 +2,9 @@
   "name": "proscrumdev/battleship",
   "description": "simple console game",
   "autoload": {
-    "classmap": [
-      "src/"
-    ]
+    "psr-4": {
+      "Battleship\\": "src/Battleship/"
+    }
   },
   "require": {
     "php": ">7"
@@ -14,7 +14,7 @@
     "behat/behat": "^3.5.0"
   },
   "scripts": {
-    "game": "App::run",
+    "game": "php src/run.php",
     "test": [
       "vendor/bin/phpunit --bootstrap vendor/autoload.php -c phpunit.xml",
       "vendor/bin/behat -f pretty -o std -f junit -o testresults"
