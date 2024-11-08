@@ -78,7 +78,10 @@ autoplay mode
 composer run game -- --autoplay
 ```
 
-
+multiple flags
+```bash
+composer run game -- --godmode --easy --autoplay --preset
+```
 
 example of map in godmode
 
