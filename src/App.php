@@ -574,7 +574,7 @@ class App
         $shipWidth = max(array_map('strlen', explode("\n", $ship)));
 
         // Determine the width of the terminal window.
-        $terminalWidth = 300;
+        $terminalWidth = 200;
 
         // Direction can be 1 (right) or -1 (left)
         $direction = 1;
